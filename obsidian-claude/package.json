@@ -1,0 +1,30 @@
+{
+  "name": "obsidian-claude",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal knowledge management system integrating Obsidian with Claude Code",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web -c blue,green \"npm run dev -w @obsidian-claude/server\" \"npm run dev -w @obsidian-claude/web\"",
+    "dev:server": "npm run dev -w @obsidian-claude/server",
+    "dev:web": "npm run dev -w @obsidian-claude/web",
+    "build": "npm run build -w @obsidian-claude/shared && npm run build -w @obsidian-claude/server && npm run build -w @obsidian-claude/web",
+    "build:server": "npm run build -w @obsidian-claude/server",
+    "build:web": "npm run build -w @obsidian-claude/web",
+    "start": "npm run start -w @obsidian-claude/server",
+    "init-vault": "node scripts/init-vault.js",
+    "clean": "rimraf packages/*/dist packages/*/.cache.db",
+    "typecheck": "tsc -b packages/shared packages/server"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

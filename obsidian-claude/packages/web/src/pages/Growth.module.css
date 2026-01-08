@@ -1,0 +1,237 @@
+/**
+ * Growth Tracking Page Styles
+ */
+
+.growth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* ============================================================================
+   SECTION STYLES
+   ============================================================================ */
+
+.section {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+/* ============================================================================
+   OVERVIEW
+   ============================================================================ */
+
+.overview {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+}
+
+.overviewStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-4);
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.statValue {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.statLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================================================
+   COMPETENCY MATRIX
+   ============================================================================ */
+
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-4);
+}
+
+/* ============================================================================
+   DIMENSION CARD
+   ============================================================================ */
+
+.dimensionCard {
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+}
+
+.dimensionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-2);
+}
+
+.dimensionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.dimensionDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-4);
+  line-height: var(--line-height-normal);
+}
+
+/* ============================================================================
+   LEVEL BADGES
+   ============================================================================ */
+
+.levelBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.levelJunior {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.levelMid {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.levelSenior {
+  background-color: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+}
+
+/* ============================================================================
+   PROGRESS BAR
+   ============================================================================ */
+
+.progressSection {
+  margin-top: var(--spacing-3);
+}
+
+.progressBar {
+  height: 8px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--spacing-2);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), #a78bfa);
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-slow);
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nextMilestone {
+  color: var(--color-accent);
+}
+
+/* ============================================================================
+   LEGEND
+   ============================================================================ */
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.legendDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================================================
+   TIPS
+   ============================================================================ */
+
+.tips {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.tips p {
+  margin-bottom: var(--spacing-3);
+}
+
+.tipsList {
+  margin-left: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.tipsList li {
+  margin-bottom: var(--spacing-2);
+}
+
+.tipsNote {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.tipsNote code {
+  background-color: var(--color-bg-tertiary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+}
+
+/* ============================================================================
+   STATES
+   ============================================================================ */
+
+.loading {
+  text-align: center;
+  padding: var(--spacing-8);
+  color: var(--color-text-muted);
+}
+
+.error {
+  text-align: center;
+  padding: var(--spacing-8);
+  color: var(--color-error);
+}
