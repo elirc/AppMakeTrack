@@ -96,15 +96,42 @@ The server reads configuration from environment variables or `config/default.jso
 
 ## Project Structure
 
-See the `docs/` folder for detailed documentation on each module:
+The `docs/` folder holds one teaching doc per module, named after the file
+it explains. A sensible reading order:
 
-- `docs/monorepo.file.md` - Project structure and tooling
-- `docs/types.file.md` - Type system design
-- `docs/database.file.md` - SQLite caching layer
-- `docs/vault-service.file.md` - File operations
-- `docs/api-routes-overview.file.md` - REST API design
-- `docs/mcp-server.file.md` - Claude Code integration
-- `docs/web-frontend.file.md` - React dashboard
+1. `docs/package.json.file.md` + `docs/tsconfig.base.json.file.md` — the monorepo wiring
+2. `docs/packages-shared-src-types.ts.file.md` and `-validation.ts.file.md` — the shared contract both server and web import
+3. `docs/packages-server-src-services-vault.ts.file.md` — file operations; the vault is the source of truth
+4. `docs/packages-server-src-db-index.ts.file.md` + `-db-schema.ts.file.md` — the sql.js cache layer
+5. `docs/api-routes-overview.file.md` then `docs/packages-server-src-api-routes-notes.ts.file.md` — the REST surface
+6. `docs/mcp-server.file.md` — how Claude Code drives the same services
+7. `docs/web-frontend.file.md` — the React dashboard
+
+## Learning from this codebase
+
+Three exercises, easiest first. Each has a check you can actually run.
+
+1. **Trace a capture.** Start at `packages/server/src/mcp/tools/capture.ts`
+   and follow one `capture` call: tool handler → `getVaultService()` →
+   `appendToNote()` → today's daily note on disk. **Check**: you can point
+   at the `switch (section)` in the capture handler that decides *which
+   section* of the daily note the text lands in, and at the call that
+   creates the note if today's doesn't exist (`getOrCreateDailyNote`, in
+   `packages/server/src/services/vault.ts`).
+2. **Add a 12th MCP tool.** Every tool in `packages/server/src/mcp/tools/`
+   is the same shape: a `definition: Tool` constant plus a handler,
+   registered in `mcp/server.ts`. Add a `streak` tool that reports how many
+   consecutive days have a daily note. **Check**: the tool appears in
+   Claude Code's tool list and returns the right number against a vault
+   where you deleted yesterday's note.
+3. **Wire up the missing file watcher.** `chokidar` is in
+   `packages/server/package.json` but never imported, so edits made
+   directly in Obsidian don't update the SQLite cache or the FlexSearch
+   index until the file is next read. Watch the vault directory, and on
+   `change` re-index that one note. **Check**: edit a note's title in
+   Obsidian (or any editor) while the server runs, then hit
+   `GET /api/search?q=<new title>` — it should match without restarting
+   the server. Decide and write down: what should happen on `unlink`?
 
 ## Development
 

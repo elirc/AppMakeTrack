@@ -2,7 +2,7 @@
 
 ## What This File Is
 
-This is the package.json for our backend server. It's more complex than the shared package because the server does more: HTTP API, MCP server, database, file watching, logging, and more.
+This is the package.json for our backend server. It's more complex than the shared package because the server does more: HTTP API, MCP server, database, search indexing and logging (file watching is declared but not wired up yet — see the chokidar section below).
 
 ## My Thought Process
 
@@ -48,44 +48,41 @@ workspace:^1.0  → Local version matching ^1.0
 
 **Why `*`?** In a monorepo, we always want the latest local version. Version matching doesn't matter because it's all one codebase.
 
-### better-sqlite3
+### sql.js
 
 ```json
-"better-sqlite3": "^9.4.3"
+"sql.js": "^1.10.2"
 ```
 
-**What it is:** Fast, synchronous SQLite bindings for Node.js.
+**What it is:** SQLite compiled to WebAssembly — the whole database engine
+runs inside Node with no native binary.
 
-**Why I chose it:**
+**The choice, honestly:** the original plan was `better-sqlite3`
+(synchronous, native, fastest):
 
 | Library | Style | Speed | Binary? |
 |---------|-------|-------|---------|
 | better-sqlite3 | Synchronous | Very fast | Yes (native) |
-| sql.js | Async | Slower | No (WASM) |
+| sql.js | Async init, sync queries | Slower | No (WASM) |
 | sqlite3 | Async (callbacks) | Medium | Yes (native) |
 
-**Why synchronous?**
+What shipped is `sql.js` — check `packages/server/package.json` and the
+"must load WASM" comments in `packages/server/src/db/index.ts`. The native
+binary's one listed con ("compilation on install can fail on some systems")
+is exactly what decides it on a machine where node-gyp builds are flaky:
+a dependency that always installs beats one that is faster when it installs.
 
-```javascript
-// Async (sqlite3) - more complex
-db.get('SELECT * FROM notes', [], (err, row) => {
-  if (err) throw err;
-  console.log(row);
-});
+**What sql.js costs you, visible in this codebase:**
 
-// Sync (better-sqlite3) - simpler
-const row = db.prepare('SELECT * FROM notes').get();
-console.log(row);
-```
-
-For a local desktop app, synchronous database calls are fine. The simplicity is worth it.
-
-**The native binary tradeoff:**
-
-- Pro: Much faster than WASM
-- Con: Needs compilation on install (can fail on some systems)
-
-For a personal project, the speed is worth the install complexity.
+- `DatabaseService.create()` is async because the WASM module must load
+  first — that's why `initDatabase()` is awaited in
+  `packages/server/src/index.ts` before the server starts.
+- Nothing is written to disk automatically. The database lives in memory,
+  and `db/index.ts` persists it by serializing the whole database
+  (`fs.writeFileSync(this.dbPath, Buffer.from(data))`). Crash between
+  writes and you lose whatever wasn't flushed — acceptable for a metadata
+  *cache* whose source of truth is the markdown vault, unacceptable if this
+  were the primary store. That distinction is the design insight.
 
 ### chokidar
 
@@ -94,6 +91,13 @@ For a personal project, the speed is worth the install complexity.
 ```
 
 **What it is:** Cross-platform file system watcher.
+
+> **Status:** declared but not yet wired up — grep the server source for
+> `chokidar` and you'll find no import. The vault is currently read from
+> disk on demand by `VaultService`, so edits made directly in Obsidian
+> don't invalidate the SQLite cache until the relevant code path re-reads
+> the file. Connecting this dependency is the best open exercise in the
+> repo — see "Learning from this codebase" in the root README.
 
 **Why not Node's built-in `fs.watch`?**
 

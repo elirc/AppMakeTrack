@@ -1,5 +1,19 @@
 # Obsidian-Claude System Architecture
 
+> **Status (2026-10-06).** This is the pre-build design document; the build in
+> `obsidian-claude/` followed it closely but not completely. What shipped:
+> all three packages (`shared`, `server`, `web`), the Express REST API with
+> seven route files, all 11 MCP tools, FlexSearch indexing, and the SQLite
+> cache — implemented with `sql.js` (WASM, persisted by writing the buffer
+> to disk in `packages/server/src/db/index.ts`), not a native driver.
+> What did **not** ship: the file watcher. `chokidar` is declared in
+> `packages/server/package.json` but never imported — there is no
+> `watcher/` directory, and the vault is read from disk on demand by
+> `VaultService` instead of being watched. Treat the watcher boxes and the
+> Phase-2 "file watcher" item below as open work, and see the learning
+> section in `obsidian-claude/README.md`, which turns wiring it up into an
+> exercise.
+
 ## Overview
 
 A personal knowledge management system integrating Obsidian with Claude Code for note-taking, project tracking, learning logs, and senior engineer growth tracking.
